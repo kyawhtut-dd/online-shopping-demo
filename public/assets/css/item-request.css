@@ -1,0 +1,23 @@
+.request-status {
+	padding: 4px 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
+	color: white;
+	position: absolute;
+	top: 8px;
+	right: 8px;
+}
+
+.request-status-pending {
+	background-color: #ffc107;
+}
+
+.request-status-checking {
+	background-color: #00b6ff;
+}
+
+.request-status-complete {
+	background-color: #58d300;
+}

@@ -1,0 +1,32 @@
+:root {
+	--button-color: red;
+}
+
+.category-container {
+}
+
+.category-container img {
+	width: 100px;
+}
+
+.category-container p {
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem!important;
+	color: black;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.category-container span {
+	background-color: var(--button-color);
+	font-weight: 600;
+	font-size: 18px;
+	color: white;
+	width: 100px;
+	display: inline-block;
+	border-radius: 4px;
+	padding: 4px;
+	letter-spacing: 1.5px;
+	cursor: pointer;
+}

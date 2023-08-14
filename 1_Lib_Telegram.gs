@@ -41,6 +41,9 @@ class TelegramApp {
     this.answer_shipping_query_reply = null
     this.successful_payment_reply = null
 
+    this.entities = []
+    this.reply_to_message = null
+
     this.is_telegram_request = false
     this.botURL = `https://api.telegram.org/bot${bot_id}/`
   }
@@ -64,7 +67,7 @@ class TelegramApp {
 
     let payload = JSON.parse(request.postData.contents)
 
-    if (payload.message || payload.callback_query || payload.pre_checkout_query || payload.shipping_address) {
+    if (payload.message != null || (payload.message && payload.message.reply_to_message) != null || payload.callback_query != null || payload.pre_checkout_query != null || payload.shipping_address != null) {
       this.is_telegram_request = true
     }
 
@@ -77,9 +80,15 @@ class TelegramApp {
       this.chat_id = payload.message.from.id
       this.message_id = payload.message.message_id
 
-      if (isBotCommandMessage(payload.message)) {
+      if (payload.message.reply_to_message && payload.message.reply_to_message.forward_from) {
+        this.text = payload.message.text
+        this.entities = payload.message.entities
+        this.reply_to_message = payload.message.reply_to_message
+      } else if (isBotCommandMessage(payload.message)) {
+        this.entities = payload.message.entities
         this.bot_command = payload.message.text
       } else if (payload.message.text != null) {
+        this.entities = payload.message.entities
         this.message = payload.message.text
       } else if (payload.message.successful_payment != null) {
         this.successful_payment = payload.message.successful_payment
@@ -191,6 +200,14 @@ class TelegramApp {
       if (this.web_app_default_reply != null) return this.web_app_default_reply(this)
 
       return this.replyDefault(`<strong>Auto Reply</strong>\nWeb app reply not found. $`)
+
+    } else if (this.reply_to_message != null) {
+
+      return this.sendMessage({
+        text: this.text,
+        chat_id: this.reply_to_message.forward_from.id,
+        entities: this.entities
+      })
 
     }
   }
@@ -304,11 +321,12 @@ class TelegramApp {
     })
   }
 
-  sendMessage({ text, chat_id = this.getChatId(), parse_mode = `html`, reply_markup = null }) {
+  sendMessage({ text, chat_id = this.getChatId(), parse_mode = `html`, reply_markup = null, entities = [] }) {
     let payload = {
       text: text,
       chat_id: chat_id,
-      parse_mode: `html`
+      parse_mode: `html`,
+      entities: entities
     }
 
     if (reply_markup != null) payload["reply_markup"] = reply_markup
@@ -457,11 +475,11 @@ class TelegramApp {
     })
   }
 
-  replyWithChatAction(action) {
+  sendChatAction(action, chat_id = this.chat_id) {
     return this.fetch({
-      url: `sendChatAction`,
+      route: `sendChatAction`,
       payload: {
-        chat_id: this.chat_id,
+        chat_id: chat_id,
         action: action
       }
     })
@@ -500,6 +518,29 @@ class TelegramApp {
 
   replyDefault(text = "Hello this is default message.") {
     return this.sendMessage({ text: text })
+  }
+
+  replayToAdmin({ text, chat_id, reply_markup = null, parse_mode = `html`, entities = [] }) {
+    return this.sendMessage({
+      text: text,
+      chat_id: chat_id,
+      reply_markup: reply_markup,
+      parse_mode: parse_mode,
+      entities: entities
+    })
+  }
+
+  forwardToAdmin({ from_chat_id = this.chat_id, chat_id }) {
+    let payload = {
+      from_chat_id: from_chat_id,
+      chat_id: chat_id,
+      message_id: this.message_id
+    }
+    console.log(payload)
+    return this.fetch({
+      route: `forwardMessage`,
+      payload: payload
+    })
   }
 
   setMyCommands(commands) {

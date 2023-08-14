@@ -44,10 +44,7 @@ class Request {
       message: this.message,
       data: this.response ? this.response : null
     }
-    if (this.DEBUG) {
-      console.log(responseData)
-      return this
-    }
+    if (this.DEBUG) console.log(responseData)
     return ContentService.createTextOutput(JSON.stringify(responseData)).setMimeType(ContentService.MimeType.JSON)
   }
 }

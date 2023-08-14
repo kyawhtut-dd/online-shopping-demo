@@ -1,4 +1,5 @@
 let doGet = (e) => {
+  Tamotsu.initialize()
   if (e.parameter.payload) {
     e.parameter.payload = JSON.parse(e.parameter.payload)
   }
@@ -15,11 +16,11 @@ let doGet = (e) => {
   // Builing routes
   let route = new Route()
 
-  route.authMiddleware(function (request) {
-    if (request.route.startsWith("admin_")) {
-      return adminUserAuth(request)
-    } else return checkUserAuth(request)
-  })
+  // route.authMiddleware(function (request) {
+  //   if (request.route.startsWith("admin_")) {
+  //     return adminUserAuth(request)
+  //   } else return checkUserAuth(request)
+  // })
 
   regiseterRoute(route)
 
@@ -30,6 +31,8 @@ let doGet = (e) => {
 }
 
 let doPost = (e) => {
+  Tamotsu.initialize()
+
   let telegramController = new TelegramController(e)
 
   if (telegramController.isTelegramRequest()) {
@@ -63,11 +66,11 @@ let doPost = (e) => {
   // Builing routes
   let route = new Route()
 
-  route.authMiddleware(function (request) {
-    if (request.route.startsWith("admin_")) {
-      return adminUserAuth(request)
-    } else return checkUserAuth(request)
-  })
+  // route.authMiddleware(function (request) {
+  //   if (request.route.startsWith("admin_")) {
+  //     return adminUserAuth(request)
+  //   } else return checkUserAuth(request)
+  // })
 
   regiseterRoute(route)
 
@@ -78,5 +81,10 @@ let doPost = (e) => {
 }
 
 let regiseterRoute = (route) => {
+  route.on(`check_user`, UserController.checkUser, false)
   route.on(`signupUser`, UserController.signupUser, false)
+
+  route.on(`get_category_list`, CategoryController.getAll, false)
+
+  route.on(`get_all_item_by_category_id`, ItemController.getAllByCategoryId, false)
 }

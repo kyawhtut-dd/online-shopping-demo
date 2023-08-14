@@ -1,5 +1,13 @@
 class UserController {
 
+  static checkUser(request) {
+    let user_id = request.user_id
+    
+    request.response = UserTable.isUserExistByTgId(user_id)
+
+    return request
+  }
+
   static signupUser(request) {
     let Table = new UserTable()
 

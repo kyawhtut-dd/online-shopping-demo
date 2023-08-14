@@ -1,6 +1,12 @@
 const SHEET_ID = `1dlo3fJYF2xo1hA7UhI_oPfAYOJers1XqfHm6EeiyyQw`
 const Logger = BetterLog.useSpreadsheet(SHEET_ID)
 const TELEGRAM_BOT_ID = `6528580725:AAFVvVLQAJb9rMNqvmOtPhjJPTuJ6jfu4Gk`
+const WEB_APP_BASE_URL = `https://2aa8-118-200-69-12.ngrok-free.app/telegram/online-shop/`
+
+const WEB_APP_URL = {
+  command_shop: `category_page.html`,
+  command_submit_form: `telegram.html`,
+}
 
 let generateUUID = () => {
   var d = new Date().getTime() //Timestamp
@@ -20,11 +26,26 @@ let generateUUID = () => {
   })
 }
 
+let getParamKey = (query, key) => {
+  key = key.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]")
+  var regx = new RegExp("[\\?&]" + key + "=([^&#]*)")
+  let results = regx.exec(query)
+  return results === null ? `` : decodeURIComponent(results[1].replace(/\+/g, " "))
+}
+
 String.prototype.template = function (data) {
+  let original = data
   return this.replace(/\${([^{]+)}/g, function (ignore, key) {
+    data = original
     key.split(".").forEach(key => {
+      key = key.replace("(", "").replace(")", "")
       data = data[key]
+      if (typeof data === 'function') data = data()
     })
     return data
   })
+}
+
+let getWebAppUrl = (action, chat_id) => {
+  return WEB_APP_BASE_URL + WEB_APP_URL[action] + `?id=${chat_id}`
 }

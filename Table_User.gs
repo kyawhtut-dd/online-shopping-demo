@@ -4,8 +4,11 @@ class UserTable {
     return new UserTable().isUserExistByTgId(tg_id)
   }
 
+  static getUserByTgId(tg_id) {
+    return new UserTable().getUserByTgId(tg_id)
+  }
+
   constructor() {
-    Tamotsu.initialize()
     this.Table = Tamotsu.Table.define(
       {
         sheetName: `User`,
@@ -30,21 +33,23 @@ class UserTable {
   }
 
   isUserExist(user_id) {
-    return this.Table.where((user) => {
-      return user.user_id == user_id
-    }).first() != null
+    return this.getUserById(user_id) != null
   }
 
   isUserExistByTgId(tg_id) {
-    return this.Table.where((user) => {
-      return user.tg_id == tg_id
-    }).first() != null
+    return this.getUserByTgId(tg_id) != null
   }
 
   getUserByTgId(tg_id) {
-    return this.Table.where((user) => {
-      return user.tg_id == tg_id
-    }).first()
+    return this.Table.where(user => user.tg_id == tg_id ).first()
+  }
+
+  getUserById(user_id) {
+    let user = this.Table.where({'user_id': user_id}).first()
+    user.fullName = function() {
+      return [user[`first_name`], user[`last_name`]].join(` `)
+    }
+    return user
   }
 
   createOrUpdateUser({ tg_id, user_name, first_name, last_name, shipping_address = null }) {

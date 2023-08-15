@@ -41,14 +41,11 @@ class UserTable {
   }
 
   getUserByTgId(tg_id) {
-    return this.Table.where(user => user.tg_id == tg_id ).first()
+    return this.Table.where({ tg_id: parseInt(tg_id) }).first()
   }
 
   getUserById(user_id) {
-    let user = this.Table.where({'user_id': user_id}).first()
-    user.fullName = function() {
-      return [user[`first_name`], user[`last_name`]].join(` `)
-    }
+    let user = this.Table.where({ user_id }).first()
     return user
   }
 

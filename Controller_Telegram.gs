@@ -80,6 +80,8 @@ class TelegramController {
 
       telegram.regiseterCallbacks([TelegramCalbackSkipQueueUser.get(), TelegramCallbackTalkToAdmin.get()])
 
+      telegram.registerWebAppReply(TelegramWebAppRequestRegisteration.get())
+
       // this.Telegram.registerWebAppReply()
     }
   }

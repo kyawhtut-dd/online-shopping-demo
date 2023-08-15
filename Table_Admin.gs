@@ -26,11 +26,13 @@ class AdminTable {
   }
 
   isUserExistByTgId(tg_id) {
+    tg_id = parseInt(tg_id)
     return this.getUserByTgId(tg_id) != null
   }
 
   getUserByTgId(tg_id) {
-    let user = this.Table.where(user => user.user_id == tg_id).first()
+    let user_id = parseInt(tg_id)
+    let user = this.Table.where({ user_id }).first()
     return user
   }
 }

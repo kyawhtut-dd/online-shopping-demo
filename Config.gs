@@ -1,7 +1,7 @@
 const SHEET_ID = `1dlo3fJYF2xo1hA7UhI_oPfAYOJers1XqfHm6EeiyyQw`
 const Logger = BetterLog.useSpreadsheet(SHEET_ID)
 const TELEGRAM_BOT_ID = `6528580725:AAFVvVLQAJb9rMNqvmOtPhjJPTuJ6jfu4Gk`
-const WEB_APP_BASE_URL = `https://2aa8-118-200-69-12.ngrok-free.app/telegram/online-shop/`
+const WEB_APP_BASE_URL = `https://e1e8-118-200-69-12.ngrok-free.app/online-shop/public/`
 
 const WEB_APP_URL = {
   command_shop: `category_page.html`,

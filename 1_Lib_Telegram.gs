@@ -199,7 +199,7 @@ class TelegramApp {
 
       if (this.web_app_default_reply != null) return this.web_app_default_reply(this)
 
-      return this.replyDefault(`<strong>Auto Reply</strong>\nWeb app reply not found. $`)
+      return this.replyDefault(`<strong>Auto Reply</strong>\nWeb app reply not found.`)
 
     } else if (this.reply_to_message != null) {
 

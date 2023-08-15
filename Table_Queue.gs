@@ -41,7 +41,8 @@ class QueueTable {
   }
 
   isQueuing(user_id) {
-    return this.Table.where(user => user.user_id == user_id).first() != null
+    user_id = parseInt(user_id)
+    return this.Table.where({ user_id }).first() != null
   }
 
   insertQueue(user_id) {
@@ -57,13 +58,14 @@ class QueueTable {
   }
 
   getQueueNumber(user_id) {
-    let queue = this.Table.where(user => user.user_id == user_id).first()
+    user_id = parseInt(user_id)
+    let queue = this.Table.where({ user_id }).first()
     if (queue == null) return 0
     else return queue[`#`]
   }
 
   removeQueue(user_id) {
-    this.Table.where(user => user.user_id == user_id).first().destroy()
+    this.Table.where({ user_id }).first().destroy()
   }
 
   getQueueUser(user_id) {

@@ -3,7 +3,7 @@ class UserController {
   static checkUser(request) {
     let user_id = request.user_id
     
-    request.response = UserTable.isUserExistByTgId(user_id)
+    request.response = UserTable.getUserByTgId(user_id)
 
     return request
   }

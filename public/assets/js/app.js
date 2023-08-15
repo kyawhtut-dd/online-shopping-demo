@@ -1,7 +1,28 @@
 (function (jQuery) {
 	"use strict";
 
+	const BASE_URL = `https://script.google.com/macros/s/AKfycbzLhyJygr1MJQwNOznnDnKtxXB2MO2xtmw2dfEw5LLwh-sxaBjs2FZnl6PIBYG7EzMD/exec`
+
+	function checkUser(App) {
+		if (App.id == null || App.id == ``) return
+		App.Api.sheet({
+			route: `check_user`,
+			query: {
+				user_id: App.id
+			},
+			callback: function(response) {
+				App.isRegister = false
+				if (response.status == 200 && response.data != null) {
+					App.username = response.data.user_name
+					App.displayname = [response.data.first_name, response.data.last_name].join(" ")
+					App.isRegister = true
+				}
+			}
+		})
+	}
+
 	jQuery.App = function() {
+
 		let app = {
 			BackButton: Telegram.WebApp.BackButton,
 			MainButton: Telegram.WebApp.MainButton,
@@ -9,6 +30,8 @@
 			id: null,
 			username: null,
 			displayname: null,
+			Api: $.Api(BASE_URL),
+			isRegister: false,
 
 			init() {
 				this.MainButton.hide()
@@ -16,16 +39,12 @@
 
 				try {
 					this.id = this.initDataUnsafe.user.id || null
-					this.username = this.initDataUnsafe.user.username || null
-					this.displayname = this.initDataUnsafe.user.first_name || ``
-					let lastname = this.initDataUnsafe.user.last_name || ``
-					if (lastname != ``) {
-						this.displayname += ` ` + lastname
-					}
 				} catch (e) {
 					this.id = $.Utils().getParameter("id")
 					console.log(e)
 				}
+
+				checkUser(this)
 
 				return this
 			},
@@ -104,6 +123,26 @@
 					Telegram.WebApp.openLink('https://telegram.org/faq');
 					}
 				})
+			},
+
+			showConfirmClose() {
+				this.showPopup(
+					"Online Shop Demo",
+					"Changes that you made may not be saved",
+					[
+						{
+							id: 'close_anyway', 
+							type: 'destructive', 
+							text: 'Close anyway'
+						},
+						{
+							type: 'cancel'
+						}
+					], 
+					function(button_id) {
+						if (button_id === "close_anyway") this.close()
+					}
+				)
 			},
 
 			close() {

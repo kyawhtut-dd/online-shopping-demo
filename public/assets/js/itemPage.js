@@ -1,9 +1,9 @@
 (function (jQuery) {
 
-	const BASE_URL = `https://script.google.com/macros/s/AKfycbzLhyJygr1MJQwNOznnDnKtxXB2MO2xtmw2dfEw5LLwh-sxaBjs2FZnl6PIBYG7EzMD/exec`
 	let App = null
+	let Page = null
+	let NetworkCallback = null
 
-	let page = null
 	let itemList = []
 
 	function calculateTotalCount() {
@@ -17,11 +17,11 @@
 
 		App.MainButton.text = "စျေးဝယ်ခြင်း ကြည့်ရန်"
 		if (totalCount > 0) {
-			App.showMainButton()
 			App.enableClosingConfirmation()
+			App.showMainButton()
 		} else {
-			App.hideMainButton()
 			App.disableClosingConfirmation()
+			App.hideMainButton()
 		}
 	}
 
@@ -64,7 +64,7 @@
 
 	function renderPage() {
 
-		page.empty()
+		Page.empty()
 
 		if (itemList.length == 0) return
 
@@ -129,16 +129,38 @@
 			row.append(parent)
 		})
 
-		page.append(row)
-		page.show()
+		Page.append(row)
+		Page.show()
+	}
+
+	function fetchItemList() {
+		let category_id = $.Utils().getParameter(`category_id`)
+		App.Api.sheet({
+			route: `get_all_item_by_category_id`,
+			query: {
+				category_id
+			},
+			callback: function(response) {
+				if (NetworkCallback != null) NetworkCallback(response)
+
+				if (response.status === `success`) {
+					if (response.data != null) itemList = response.data
+					renderPage()
+				}
+			}
+		})
 	}
 
 	jQuery.ItemPage = function(app, div) {
 		App = app
-		page = $(div)
-		page.empty()
+		Page = $(div)
+		Page.empty()
 
 		return {
+			init() {
+				fetchItemList()
+			},
+
 			isHasSelectedItem() {
 				return getCartItemList().length > 0
 			},
@@ -149,31 +171,17 @@
 				})
 			},
 
+			setNetworkCallback(callback) {
+				NetworkCallback = callback
+			},
+
 			show() {
 				App.MainButton.text = `စျေးဝယ်ခြင်း ကြည့်ရန်`
-				page.show()
+				Page.show()
 			},
 
 			hide() {
-				page.hide()
-			},
-
-			fetch(callback) {
-				let category_id = $.Utils().getParameter(`category_id`)
-				let api = $.Api(BASE_URL)
-				api.sheet({
-					route: `get_all_item_by_category_id`,
-					query: {
-						category_id
-					},
-					callback: function(response) {
-						callback(response)
-						if (response.status === `success`) {
-							if (response.data != null) itemList = response.data
-							renderPage()
-						}
-					}
-				})
+				Page.hide()
 			}
 		}
 	}

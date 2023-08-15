@@ -1,8 +1,8 @@
 (function (jQuery) {
 
-	const BASE_URL = `https://script.google.com/macros/s/AKfycbzLhyJygr1MJQwNOznnDnKtxXB2MO2xtmw2dfEw5LLwh-sxaBjs2FZnl6PIBYG7EzMD/exec`
 	let App = null
 	let Page = null
+	let NetworkCallback = null
 	let itemList = []
 
 	function renderPage() {
@@ -39,12 +39,30 @@
 		Page.show()
 	}
 
+	function fetchCategory() {
+		App.Api.sheet({
+			route: `get_category_list`,
+			callback: function(response) {
+				if (NetworkCallback != null) NetworkCallback(response)
+
+				if (response.status === `success`) {
+					if (response.data != null) itemList = response.data
+					renderPage()
+				}
+			}
+		})
+	}
+
 	jQuery.CategoryPage = function(app, div) {
 		App = app
 		Page = $(div)
 		Page.empty()
 
 		return {
+			init() {
+				fetchCategory()
+			},
+
 			show() {
 				Page.show()
 			},
@@ -53,18 +71,8 @@
 				Page.hide()
 			},
 
-			fetch(callback) {
-				let api = $.Api(BASE_URL)
-				api.sheet({
-					route: `get_category_list`,
-					callback: function(response) {
-						callback(response)
-						if (response.status === `success`) {
-							if (response.data != null) itemList = response.data
-							renderPage()
-						}
-					}
-				})
+			setNetworkCallback(callback) {
+				NetworkCallback = callback
 			}
 		}
 	}

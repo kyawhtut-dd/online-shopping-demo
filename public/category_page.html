@@ -51,19 +51,18 @@
 			const Home = $.Home()
 			const AnimationPage = $.AnimationPage(`#divAnimation`)
 
-			Home.setAnimationPage(AnimationPage)
-
 			const CategoryPage = $.CategoryPage(App, `#divCategoryPage`)
 
-			console.log($(`#divCategoryPage`))
+			CategoryPage.setNetworkCallback((result) => {
+				Home.networkResult(result)
+			})
 
+			Home.setAnimationPage(AnimationPage)
 			Home.init(CategoryPage)
 
 			App.init()
 
-			CategoryPage.fetch((result) => {
-				Home.networkResult(result)
-			})
+			CategoryPage.init()
 		})
 	</script>
 

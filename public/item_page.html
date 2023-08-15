@@ -52,35 +52,24 @@
 			const ItemPage = $.ItemPage(App, `#divItemList`)
 			const CartPage = $.CartPage(App, `#divCart`)
 
+			ItemPage.setNetworkCallback((result) => {
+				Home.networkResult(result)
+			})
+
 			Home.init(ItemPage)
 			Home.registerPage(CartPage)
 			Home.setAnimationPage(AnimationPage)
 
-			ItemPage.fetch((result) => {
-				Home.networkResult(result)
-			})
+			ItemPage.init()
 
 			App.MainButton.onClick(function() {
 				if (Home.getCurrentPage() === ItemPage) {
 					Home.openPage(CartPage)
+				} else if (Home.getCurrentPage() === CartPage && !App.isRegister) {
+					App.sendData(`register_request_from_cart_page`)
+					App.showAlert(`Hello`)
 				} else {
-					App.showPopup(
-						"Online Shop | Dev",
-						"Changes that you made may not be saved",
-						[
-							{
-								id: 'close_anyway', 
-								type: 'destructive', 
-								text: 'Close anyway'
-							},
-							{
-								type: 'cancel'
-							}
-						], 
-						function(button_id) {
-							if (button_id === "close_anyway") App.close()
-						}
-					)
+					App.showConfirmClose()
 				}
 			})
 

@@ -192,7 +192,7 @@ class TelegramApp {
       for (var index in this.web_app_replys) {
         var reply = this.web_app_replys[index]
 
-        if (reply.isEqualWebAppReply(this.web_app_data.button_text)) {
+        if (reply.isEqualWebAppReply(this.web_app_data.button_text, this.web_app_data.data)) {
           return reply.run(this)
         }
       }
@@ -774,17 +774,18 @@ class Callback {
 }
 
 class WebAppReply {
-  static createWebAppReply(button_text, callback) {
-    return new WebAppReply(button_text, callback)
+  static createWebAppReply({button_text = null, data = null, callback}) {
+    return new WebAppReply(button_text, data, callback)
   }
 
-  constructor(button_text, callback) {
+  constructor(button_text, data, callback) {
     this.button_text = button_text
+    this.data = data
     this.callback = callback
   }
 
-  isEqualWebAppReply(button_text) {
-    return this.button_text == button_text
+  isEqualWebAppReply(button_text, data) {
+    return this.button_text == button_text || this.data == data
   }
 
   run(telegram) {
@@ -808,8 +809,8 @@ let createCallback = (callback, action) => {
   return Callback.createCallback(callback, action)
 }
 
-let createWebAppReply = (button_text, callback) => {
-  return WebAppReply.createWebAppReply(button_text, callback)
+let createWebAppReply = ({button_text = null, data = null, callback}) => {
+  return WebAppReply.createWebAppReply({button_text, data, callback})
 }
 
 class Keyboard {

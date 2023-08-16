@@ -19,7 +19,7 @@ class TelegramCallbackAgreeRegistration {
       message = `<strong>${telegramConfigTable.get(`account_already_exist`).template({ telegram })}</strong>`
     }
 
-    new userTable.createOrUpdateUser({
+    userTable.createOrUpdateUser({
       tg_id: telegram.chat_id,
       user_name: telegram.user_name,
       first_name: telegram.first_name,

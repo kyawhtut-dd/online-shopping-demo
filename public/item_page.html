@@ -67,7 +67,6 @@
 					Home.openPage(CartPage)
 				} else if (Home.getCurrentPage() === CartPage && !App.isRegister) {
 					App.sendData(`register_request_from_cart_page`)
-					App.showAlert(`Hello`)
 				} else {
 					App.showConfirmClose()
 				}

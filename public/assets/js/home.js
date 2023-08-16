@@ -44,8 +44,8 @@
 				goBackPage.hide()
 				
 				currentPage = pageStack[pageStack.length - 1]
+				if (pageStack.length == 1) App.hideBackButton()
 				currentPage.show()
-				if (pageStack.length == 1) $.App().hideBackButton()
 			},
 
 			openPage(page) {

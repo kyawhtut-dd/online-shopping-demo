@@ -28,7 +28,7 @@
 				'id': `btn-${item.category_id}`
 			}).text(`Shop`)
 			btnShop.click(function() {
-				window.location.replace(`item_page.html?category_id=${item.category_id}`)
+				window.location.replace(`item_page.html?category_id=${item.category_id}&id=${App.id}`)
 			})
 			parent.append(btnShop)
 

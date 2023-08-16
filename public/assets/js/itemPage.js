@@ -151,6 +151,12 @@
 		})
 	}
 
+	function getCartItemList() {
+		return itemList.filter(item => {
+			return item.count != null && item.count > 0
+		})
+	}
+
 	jQuery.ItemPage = function(app, div) {
 		App = app
 		Page = $(div)
@@ -166,9 +172,7 @@
 			},
 
 			getCartItemList() {
-				return itemList.filter(item => {
-					item.count != null && item.count > 0
-				})
+				return getCartItemList()
 			},
 
 			setNetworkCallback(callback) {
@@ -176,7 +180,11 @@
 			},
 
 			show() {
+				App.hideMainButton()
+
 				App.MainButton.text = `စျေးဝယ်ခြင်း ကြည့်ရန်`
+				if (this.isHasSelectedItem()) App.showMainButton()
+				
 				Page.show()
 			},
 

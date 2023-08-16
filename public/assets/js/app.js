@@ -12,7 +12,7 @@
 			},
 			callback: function(response) {
 				App.isRegister = false
-				if (response.status == 200 && response.data != null) {
+				if (response.status == `success` && response.data != null) {
 					App.username = response.data.user_name
 					App.displayname = [response.data.first_name, response.data.last_name].join(" ")
 					App.isRegister = true
@@ -43,6 +43,8 @@
 					this.id = $.Utils().getParameter("id")
 					console.log(e)
 				}
+
+				console.log(this.id)
 
 				checkUser(this)
 

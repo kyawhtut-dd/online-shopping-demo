@@ -321,15 +321,22 @@ class TelegramApp {
     })
   }
 
-  sendMessage({ text, chat_id = this.getChatId(), parse_mode = `html`, reply_markup = null, entities = [] }) {
+  sendMessage({
+    text, chat_id = this.getChatId(),
+    parse_mode = `html`,
+    reply_markup = createKeyboard().remove(),
+    entities = []
+  }) {
     let payload = {
       text: text,
       chat_id: chat_id,
-      parse_mode: `html`,
+      parse_mode: parse_mode,
       entities: entities
     }
 
     if (reply_markup != null) payload["reply_markup"] = reply_markup
+
+    console.log(payload)
 
     return this.fetch({
       route: `sendMessage`,
@@ -350,7 +357,13 @@ class TelegramApp {
     })
   }
 
-  sendPhoto({ photo, chat_id = this.getChatId(), caption = null, parse_mode = `html`, reply_markup = null }) {
+  sendPhoto({
+    photo,
+    chat_id = this.getChatId(),
+    caption = null,
+    parse_mode = `html`,
+    reply_markup = createKeyboard().remove()
+  }) {
     let payload = {
       photo: photo,
       caption: caption,
@@ -366,7 +379,23 @@ class TelegramApp {
     })
   }
 
-  sendInvoice({ chat_id = this.chat_id, title, description, payload, currency = "SGD", prices, max_tip_amount = null, suggested_tip_amounts = [], photo_url = null, need_name = null, need_phone_number = null, need_email = null, need_shipping_address = null, send_phone_number_to_provider = null, send_email_to_provider = null, is_flexible = null, reply_markup = null }) {
+  sendInvoice({
+    chat_id = this.chat_id,
+    title, description,
+    payload, currency = "SGD",
+    prices,
+    max_tip_amount = null,
+    suggested_tip_amounts = [],
+    photo_url = null,
+    need_name = null,
+    need_phone_number = null,
+    need_email = null,
+    need_shipping_address = null,
+    send_phone_number_to_provider = null,
+    send_email_to_provider = null,
+    is_flexible = null,
+    reply_markup = createKeyboard().remove()
+  }) {
     let payload_data = {
       chat_id,
       title,
@@ -493,8 +522,6 @@ class TelegramApp {
       parse_mode: parse_mode
     }
 
-    console.log(payload)
-
     if (reply_markup != null) payload["reply_markup"] = reply_markup
 
     return this.fetch({
@@ -503,7 +530,7 @@ class TelegramApp {
     })
   }
 
-  editMessageReplyMarkup(reply_markup = []) {
+  editMessageReplyMarkup(reply_markup = null) {
     let payload = {
       chat_id: this.chat_id,
       message_id: this.message_id,
@@ -520,23 +547,13 @@ class TelegramApp {
     return this.sendMessage({ text: text })
   }
 
-  replayToAdmin({ text, chat_id, reply_markup = null, parse_mode = `html`, entities = [] }) {
-    return this.sendMessage({
-      text: text,
-      chat_id: chat_id,
-      reply_markup: reply_markup,
-      parse_mode: parse_mode,
-      entities: entities
-    })
-  }
-
-  forwardToAdmin({ from_chat_id = this.chat_id, chat_id }) {
+  forwardMessage({ from_chat_id = this.chat_id, chat_id }) {
     let payload = {
       from_chat_id: from_chat_id,
       chat_id: chat_id,
       message_id: this.message_id
     }
-    console.log(payload)
+
     return this.fetch({
       route: `forwardMessage`,
       payload: payload
@@ -774,7 +791,7 @@ class Callback {
 }
 
 class WebAppReply {
-  static createWebAppReply({button_text = null, data = null, callback}) {
+  static createWebAppReply({ button_text = null, data = null, callback }) {
     return new WebAppReply(button_text, data, callback)
   }
 
@@ -809,8 +826,8 @@ let createCallback = (callback, action) => {
   return Callback.createCallback(callback, action)
 }
 
-let createWebAppReply = ({button_text = null, data = null, callback}) => {
-  return WebAppReply.createWebAppReply({button_text, data, callback})
+let createWebAppReply = ({ button_text = null, data = null, callback }) => {
+  return WebAppReply.createWebAppReply({ button_text, data, callback })
 }
 
 class Keyboard {
@@ -823,6 +840,7 @@ class Keyboard {
     this.keyboard = [[]]
     this.resize_keyboard = false
     this.one_time_keyboard = false
+    this.is_persistent = false
     this.input_field_placeholder = "Message"
   }
 
@@ -838,6 +856,11 @@ class Keyboard {
 
   oneTime(oneTime) {
     this.one_time_keyboard = oneTime
+    return this
+  }
+
+  setPersistent(is_persistent) {
+    this.is_persistent = is_persistent
     return this
   }
 
@@ -862,7 +885,8 @@ class Keyboard {
       keyboard: this.keyboard,
       resize_keyboard: this.resize_keyboard,
       one_time_keyboard: this.one_time_keyboard,
-      input_field_placeholder: this.input_field_placeholder
+      input_field_placeholder: this.input_field_placeholder,
+      is_persistent: this.is_persistent
     }
   }
 

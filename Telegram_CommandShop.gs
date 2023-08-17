@@ -18,12 +18,12 @@ class TelegramCommandShop {
     let isRegister = new UserTable().isUserExistByTgId(telegram.chat_id)
     if (isRegister) {
       // telegramConfigTable.get(`admin_account_id`).split(`,`).forEach(admin_id => {
-      //   response = telegram.replayToAdmin({
+      //   response = telegram.replyToAdmin({
       //     text: `User request for shop`,
       //     chat_id: admin_id,
       //   })
 
-      //   response = telegram.forwardToAdmin({
+      //   response = telegram.forwardMessage({
       //     chat_id: admin_id,
       //   })
 
@@ -31,7 +31,7 @@ class TelegramCommandShop {
       // response = telegram.sendMessage({
       //   text: `Admin ထံသို့အကြောင်းကြားပြီးပါပြီ။`
       // })
-      telegram.setMenuButtonDefault()
+
       response = telegram.sendMessage({
         text: `ဈေးဝယ်ရန် အတွက် <strong>ဈေးဝယ်မည်</strong> ကို နှိပ်ပြီး ဝယ်နိုင်ပါသည်။`,
         reply_markup: createKeyboard().buttons([

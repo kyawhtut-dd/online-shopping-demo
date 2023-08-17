@@ -13,6 +13,11 @@ class TelegramWebAppRequestRegisteration {
 
     let response = null
     let telegramConfigTable = new TelegramConfigTable()
+    let user = new UserTable().getUserById(telegram.chat_id)
+
+    response = telegram.sendMessage({
+      text: telegramConfigTable.get(`web_app_received_for_registration`)
+    })
 
     response = telegram.sendMessage({
       text: telegramConfigTable.get(`web_reply_for_registration`),

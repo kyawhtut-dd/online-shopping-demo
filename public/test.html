@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Test</title>
+
+	<style type="text/css">
+		.cafe-items {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0 auto;
+			max-width: 480px;
+			justify-content: space-around;
+			align-content: flex-end;
+		}
+		.cafe-item, .cafe-item-shadow {
+			position: relative;
+			width: 120px;
+			height: 159px;
+			padding: 4px 5px 21px;
+			box-sizing: border-box;
+			text-align: center;
+		}
+		.cafe-item-counter {
+			position: absolute;
+			right: 0;
+			color: black;
+			top: 0;
+			min-width: 22px;
+			height: 22px;
+			padding: 2px 6px;
+			margin: 4px 6px;
+			border-radius: 11px;
+			transform: scale3d(0, 0, 1);
+			animation: .15s ease both;
+			pointer-events: none;
+			z-index: 3;
+		}
+		.cafe-item-photo {
+			position: relative;
+			height: 78px;
+		}
+		.cafe-item-label {
+			display: flex;
+			justify-content: center;
+		}
+		.cafe-item-title {
+			font-weight: 500;
+		}
+		.cafe-item-price {
+			font-weight: 700;
+			white-space: nowrap;
+		}
+		.cafe-item-buttons {
+			display: flex;
+			width: 80px;
+			justify-content: space-between;
+			margin: 10px auto 0;
+			position: relative;
+			transition: .15s ease both;
+		}
+	</style>
+</head>
+<body>
+
+	<section class="cafe-items">
+		<div class="cafe-item">
+			<div class="cafe-item-counter">1</div>
+			<div class="cafe-item-photo"></div>
+			<div class="cafe-item-label">
+				<span class="cafe-item-title">Burger</span>
+				<span class="cafe-item-price">$.499</span>
+			</div>
+			<div class="cafe-item-buttons">
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+			</div>
+		</div>
+		<div class="cafe-item">
+			<div class="cafe-item-counter">1</div>
+			<div class="cafe-item-photo"></div>
+			<div class="cafe-item-label">
+				<span class="cafe-item-title">Burger</span>
+				<span class="cafe-item-price">$.499</span>
+			</div>
+			<div class="cafe-item-buttons">
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+			</div>
+		</div>
+		<div class="cafe-item">
+			<div class="cafe-item-counter">1</div>
+			<div class="cafe-item-photo"></div>
+			<div class="cafe-item-label">
+				<span class="cafe-item-title">Burger</span>
+				<span class="cafe-item-price">$.499</span>
+			</div>
+			<div class="cafe-item-buttons">
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+			</div>
+		</div>
+		<div class="cafe-item">
+			<div class="cafe-item-counter">1</div>
+			<div class="cafe-item-photo"></div>
+			<div class="cafe-item-label">
+				<span class="cafe-item-title">Burger</span>
+				<span class="cafe-item-price">$.499</span>
+			</div>
+			<div class="cafe-item-buttons">
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+			</div>
+		</div>
+		<div class="cafe-item">
+			<div class="cafe-item-counter">1</div>
+			<div class="cafe-item-photo"></div>
+			<div class="cafe-item-label">
+				<span class="cafe-item-title">Burger</span>
+				<span class="cafe-item-price">$.499</span>
+			</div>
+			<div class="cafe-item-buttons">
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+				<button class="cafe-item-decr-button button-item ripple-handler"></button>
+			</div>
+		</div>
+	</section>
+
+</body>
+</html>

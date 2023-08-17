@@ -24,10 +24,11 @@
 </head>
 <body>
 
-	<div class="container">
+	<div class="container" style="background-color: #f4f4f5;">
 		<div id="divAnimation" class="h-100"></div>
 		<div id="divItemList"></div>
 		<div id="divCart"></div>
+		<button id="btnGo">Go</button>
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -62,8 +63,20 @@
 
 			ItemPage.init()
 
+			$("#btnGo").on("click", function() {
+				if (Home.getCurrentPage() === ItemPage) {
+					CartPage.setCartItem(ItemPage.getCartItemList())
+					Home.openPage(CartPage)
+				} else if (Home.getCurrentPage() === CartPage && !App.isRegister) {
+					App.sendData(`register_request_from_cart_page`)
+				} else {
+					App.showConfirmClose()
+				}
+			})
+
 			App.MainButton.onClick(function() {
 				if (Home.getCurrentPage() === ItemPage) {
+					CartPage.setCartItem(ItemPage.getCartItemList())
 					Home.openPage(CartPage)
 				} else if (Home.getCurrentPage() === CartPage && !App.isRegister) {
 					App.sendData(`register_request_from_cart_page`)

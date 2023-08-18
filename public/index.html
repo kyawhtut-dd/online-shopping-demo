@@ -21,7 +21,7 @@
 
 	<link href="assets/css/index.css" rel="stylesheet">
 	<link href="assets/css/category-page.css" rel="stylesheet">
-	<link href="assets/css/item-page.css" rel="stylesheet">
+	<link href="assets/css/item-list-page.css" rel="stylesheet">
 
 </head>
 <body>
@@ -29,16 +29,10 @@
 	<div class="root">
 		<div class="w-100 h-100">
 			<section class="page pageCategory"></section>
-			<section id="pageItemList" class="page" style="background-color: yellow"></section>
+			<section class="page pageItemList"></section>
 			<section id="pageCart" class="page" style="background-color: blue;"></section>
 		</div>
 		<div class="pageAnimation"></div>
-		<div class="back-button">
-			<i class="fa fa-arrow-left" aria-hidden="true"></i>
-		</div>
-		<div class="main-button">
-			Main Button
-		</div>
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -49,6 +43,7 @@
 	<script src="assets/js/utils.js"></script>
 	
 	<script src="assets/js/pageCategory.js"></script>
+	<script src="assets/js/pageItemList.js"></script>
 
 	<script type="text/javascript">
 
@@ -56,59 +51,53 @@
 
 			const App = $.App()
 			const ApiService = $.ApiService(App, $(`.pageAnimation`))
+			const Animation = $.Animation()
+			let CurrentPage = null
 
-			const CategoryPage = $.CategoryPage($(`.pageCategory`))
+			const CategoryPage = $.CategoryPage(App, $(`.pageCategory`))
+			const ItemPage = $.ItemPage(App, $(`.pageItemList`))
 
-			ApiService.fetchCategoryList((result) => {
-				console.log(result)
-				CategoryPage.setCategoryList(result)
-			})
+			CurrentPage = CategoryPage
 
 			CategoryPage.open()
+			CategoryPage.setOnClickCategoryListener((catetgory) => {
+				fetchItemListByCategoryId(catetgory.category_id)
+			})
+
+			fetchCategoryList()
+
+			function fetchCategoryList() {
+				ApiService.fetchCategoryList((result) => {
+					CategoryPage.setCategoryList(result)
+				})
+			}
+
+			function fetchItemListByCategoryId(category_id) {
+				ApiService.fetchItemListByCategoryId(category_id, (result) => {
+					ItemPage.setItemList(result)
+					openPage(ItemPage, false, Animation.slideDown, Animation.slideUp)
+				})
+			}
 
 			let pageItemList = $(`#pageItemList`)
 			let pageCart = $(`#pageCart`)
 			let currentPage = 1
 
-			$(`.main-button`).click(() => {
-				if (currentPage == 1) {
-					pageCategory.slideUp({
-						complete: function() {
-							console.log("complete pageCategory")
-						}
-					})
-					pageItemList.slideDown()
-					currentPage = 2
-				} else if (currentPage == 2) {
-					pageItemList.slideUp({
-						complete: function() {
-							console.log("complete pageItemList")
-						}
-					})
-					pageCart.slideDown()
-					currentPage = 3
+			App.MainButton.onClick(() => {
+			})
+
+			App.BackButton.onClick(() => {
+				if (CurrentPage == ItemPage) {
+					openPage(CategoryPage, true, Animation.slideDown, Animation.slideUp)
 				}
 			})
 
-			$(`.back-button`).click(() => {
-				if (currentPage == 3) {
-					pageCart.slideUp({
-						complete: function() {
-							console.log("complete pageCart")
-						}
-					})
-					pageItemList.slideDown()
-					currentPage = 2
-				} else if (currentPage == 2) {
-					pageItemList.slideUp({
-						complete: function() {
-							console.log("complete pageItemList")
-						}
-					})
-					pageCategory.slideDown()
-					currentPage = 1
-				}
-			})
+			function openPage(open, isCloseWithClear, openAnim, closeAnim) {
+				if (isCloseWithClear) CurrentPage.colseWithClear(closeAnim)
+				else CurrentPage.close(closeAnim)
+				CurrentPage = open
+				CurrentPage.open(openAnim)
+			}
 
 		})
 	</script>

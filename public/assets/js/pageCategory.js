@@ -1,10 +1,13 @@
 (function (jQuery) {
 
+	let App = null
 	let Page = null
 	let onClickCategory = null
 
-	jQuery.CategoryPage = function(page) {
+	jQuery.CategoryPage = function(app, page) {
+		App = app
 		Page = page
+		Page.empty()
 		
 		close()
 
@@ -37,9 +40,7 @@
 		if (animation != null) {
 			animation(
 				Page,
-				() => {
-					Page.empty()
-				}
+				() => Page.empty()
 			)
 		} else {
 			Page.hide()
@@ -48,7 +49,6 @@
 	}
 
 	const setCategoryList = (categoryList) => {
-		Page.append(`Hello`)
 		Page.empty()
 
 		if (categoryList.length == 0) return
@@ -83,31 +83,9 @@
 			divCategoryButton.append(shopButton)
 			divCategory.append(divCategoryButton)
 
+			$.Utils().setRipple(shopButton)
 			shopButton.click(function(e) {
-				$(`.ripple`).remove()
-
-				var posX = $(this).offset().left,
-					posY = $(this).offset().top,
-					bottonWidth = $(this).width(),
-					buttonHeight = $(this).height()
-
-				$(this).prepend(`<span class="custom-ripple"></span>`)
-
-				if (buttonWidth >= buttonHeight) {
-					buttonHeight = buttonWidth
-				} else {
-					buttonWidth = buttonHeight
-				}
-
-				var x = e.pageX - posX - buttonWidth / 2
-				var y = e.pageY - posY - buttonHeight / 2
-
-				$(".ripple").css({
-					width: buttonWidth,
-					height: buttonHeight,
-					top: y + 'px',
-					left: x + 'px'
-				}).addClass(`rippleEffect`)
+				onClickCategory(category)
 			})
 
 			Page.append(divCategory)

@@ -43,10 +43,8 @@
 	}
 
 	const init = () => {
-		if (isSupportedTelegram) {
-			MainButton = $(`.main-button`)
-			BackButton = $(`.back-button`)
-		}
+
+		processButton()
 
 		hideMainButton()
 		hideBackButton()
@@ -60,6 +58,21 @@
 		console.log(id)
 
 		checkUser()
+	}
+
+	const processButton = () => {
+		if (isSupportedTelegram) {
+			let mButton = $(`<div>`, {
+				'class': `main-button`
+			})
+			let bButton = $(`<div>`, {
+				'class': `back-button`
+			})
+			$(`body`).append(mButton)
+			$(`body`).append(bButton)
+			MainButton = BootstrapMainButton(mButton)
+			BackButton = BootstrapBackButton(bButton)
+		}
 	}
 
 	const themeParams = () => {
@@ -178,5 +191,85 @@
 				}
 			}
 		})
+	}
+
+	const BootstrapMainButton = (parent) => {
+		let child = $(`<button>`)
+		$.Utils().setRipple(child)
+		
+		parent.append(child)
+
+		let object = {
+			text: ``,
+			color: null,
+			textColor: null,
+			show: () => {
+				parent.show()
+			},
+			hide: () => {
+				parent.hide()
+			},
+			disable: () => {
+				child.prop('disabled', true)
+			},
+			enable: () => {
+				child.prop('disabled', false)
+			},
+			onClick: (callback) => {
+				child.click(callback)
+			}
+		}
+		Object.defineProperty(object, `text`, {
+			get: function() {
+				return child.text()
+			},
+			set: function(value) {
+				child.text(value)
+			}
+		})
+		Object.defineProperty(object, `color`, {
+			get: function() {
+				return $.Utils().rgbToHex(child.css('background-color'))
+			},
+			set: function(value) {
+				child.css({'background-color': $.Utils().rgbToHex(value)})
+			}
+		})
+		Object.defineProperty(object, `textColor`, {
+			get: function() {
+				return $.Utils().rgbToHex(child.css('color'))
+			},
+			set: function(value) {
+				child.css({'color': $.Utils().rgbToHex(value)})
+			}
+		})
+		return object
+	}
+
+	const BootstrapBackButton = (parent) => {
+		parent.empty()
+
+		let hideIcon = `fa-times`
+		let showIcon = `fa-arrow-left`
+
+		let icon = $(`<i>`, {
+			'class': `fa`,
+			'aria-hidden': `true`
+		})
+		parent.append(icon)
+
+		return {
+			show: () => {
+				icon.removeClass(hideIcon)
+				icon.addClass(showIcon)
+			},
+			hide: () => {
+				icon.removeClass(showIcon)
+				icon.addClass(hideIcon)
+			},
+			onClick: (callback) => {
+				parent.click(callback)
+			}
+		}
 	}
 }(jQuery))

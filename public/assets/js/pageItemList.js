@@ -2,11 +2,73 @@
 
 	let App = null
 	let Page = null
-	let NetworkCallback = null
 
-	let itemList = []
+	jQuery.ItemPage = function(app, page) {
+		App = app
+		Page = page
+		
+		Page.empty()
 
-	function calculateTotalCount() {
+		close()
+
+		return {
+			open,
+			close,
+			colseWithClear,
+			setItemList,
+			getCartItemList
+		}
+	}
+
+	const open = (animation) => {
+		App.showBackButton()
+		toggleMainButton()
+
+		if (animation != null) {
+			animation(Page)
+		} else {
+			Page.show()
+		}
+	}
+
+	const close = (animation) => {
+		App.hideBackButton()
+
+		if (animation != null) {
+			animation(Page)
+		} else {
+			Page.hide()
+		}
+	}
+
+	const colseWithClear = (animation) => {
+		App.hideBackButton()
+
+		if (animation != null) {
+			animation(
+				Page,
+				() => {
+					Page.empty()
+				}
+			)
+		} else {
+			Page.hide()
+			Page.empty()
+		}
+	}
+
+	const toggleMainButton = () => {
+		App.hideMainButton()
+
+		App.MainButton.text = `စျေးဝယ်ခြင်း ကြည့်ရန်`
+		if (isHasSelectedItem) App.showMainButton()
+	}
+
+	const isHasSelectedItem = () => {
+		return getCartItemList().length > 0
+	}
+
+	const calculateTotalCount = () => {
 		let totalCount = 0
 		itemList.forEach(item => {
 			let count = item.count
@@ -25,8 +87,7 @@
 		}
 	}
 
-	function addToCart(count, item_id) {
-
+	const addToCart = (count, item_id) => {
 		let item = itemList[itemList.findIndex(item => item.item_id == item_id)]
 
 		if (item == null) return
@@ -61,136 +122,116 @@
 		}
 	}
 
-
-	function renderPage() {
-
+	const setItemList = (itemList) => {
 		Page.empty()
 
 		if (itemList.length == 0) return
 
-		let row = $(`<table>`, {
-			'class': `row`
-		})
 		itemList.forEach(item => {
-			let parent = $(`<div>`, {
-				'class': `col-4 mt-2 mb-3 text-center product-container`,
-			})
+			// let parent = $(`<div>`, {
+			// 	'class': `col-4 mt-2 mb-3 text-center product-container`,
+			// })
 
-			let div = $(`<div>`)
-			let img = $(`<img>`, {
+			// let div = $(`<div>`)
+			// let img = $(`<img>`, {
+			// 	'src': item.item_logo
+			// })
+			// div.append(img)
+			// let cartCount = $(`<span>`, {
+			// 	'id': `span-${item.item_id}`,
+			// 	'class': `cartCount`
+			// })
+			// cartCount.hide()
+			// div.append(cartCount)
+
+			// parent.append(div)
+
+			// parent.append($(`<p>`, {
+			// 	'class': `product-name mt-2`
+			// }).text(item.item_name))
+			// parent.append($(`<p>`, {
+			// 	'id': `price`
+			// }).text(`SGD ${item.item_price}`))
+
+			// let btnAddToCart = $(`<span>`, {
+			// 	'id': `btn-${item.item_id}`,
+			// 	'class': `product-add`
+			// }).text(`Add`)
+			// btnAddToCart.click(function() {
+			// 	addToCart(1, item.item_id)
+			// })
+			// parent.append(btnAddToCart)
+
+			// let btnAdd = $(`<span>`, {
+			// 	'id': `btnAdd-${item.item_id}`,
+			// 	'class': `product-sub-add`
+			// }).append(`<i class="fa fa-plus" aria-hidden="true"></i>`)
+			// btnAdd.click(function() {
+			// 	addToCart(1, item.item_id)
+			// })
+			// let btnRemove = $(`<span>`, {
+			// 	'id': `btnRemove-${item.item_id}`,
+			// 	'class': `product-sub-remove`,
+			// }).append(`<i class="fa fa-minus" aria-hidden="true"></i>`)
+			// btnRemove.click(function() {
+			// 	addToCart(-1, item.item_id)
+			// })
+			// let divAction = $(`<div>`, {
+			// 	'id': `div-${item.item_id}`
+			// }).append(btnRemove).append(btnAdd)
+			// divAction.hide()
+			// parent.append(divAction)
+
+			// row.append(parent)
+			let divItem = $(`<div>`, {
+				'class': `item`
+			})
+			
+			let divItemPhoto = $(`<div>`, {
+				'class': `item-photo`
+			})
+			divItemPhoto.append($(`<img>`, {
 				'src': item.item_logo
-			})
-			div.append(img)
-			let cartCount = $(`<span>`, {
-				'id': `span-${item.item_id}`,
-				'class': `cartCount`
-			})
-			cartCount.hide()
-			div.append(cartCount)
+			}))
+			divItem.append(divItemPhoto)
 
-			parent.append(div)
-
-			parent.append($(`<p>`, {
-				'class': `product-name mt-2`
+			let divItemLabel = $(`<div>`, {
+				'class': `item-label`
+			})
+			divItemLabel.append($(`<span>`, {
+				'class': `item-title`
 			}).text(item.item_name))
-			parent.append($(`<p>`, {
-				'id': `price`
-			}).text(`SGD ${item.item_price}`))
+			divItem.append(divItemLabel)
 
-			let btnAddToCart = $(`<span>`, {
-				'id': `btn-${item.item_id}`,
-				'class': `product-add`
-			}).text(`Add`)
-			btnAddToCart.click(function() {
-				addToCart(1, item.item_id)
+			let divItemButton = $(`<div>`, {
+				'class': `item-button`
 			})
-			parent.append(btnAddToCart)
+			let addButton = $(`<button>`, {
+				'class': `item-shop-button`
+			}).text(`Shop`)
+			let removeButton = $(`<button>`, {
+				'class': `item-shop-button`
+			}).text(`Shop`)
+			divItemButton.append(removeButton)
+			divItemButton.append(addButton)
+			divItem.append(divItemButton)
 
-			let btnAdd = $(`<span>`, {
-				'id': `btnAdd-${item.item_id}`,
-				'class': `product-sub-add`
-			}).append(`<i class="fa fa-plus" aria-hidden="true"></i>`)
-			btnAdd.click(function() {
-				addToCart(1, item.item_id)
+			$.Utils().setRipple(addButton)
+			addButton.click(function(e) {
 			})
-			let btnRemove = $(`<span>`, {
-				'id': `btnRemove-${item.item_id}`,
-				'class': `product-sub-remove`,
-			}).append(`<i class="fa fa-minus" aria-hidden="true"></i>`)
-			btnRemove.click(function() {
-				addToCart(-1, item.item_id)
+
+			$.Utils().setRipple(removeButton)
+			removeButton.click(function(e) {
 			})
-			let divAction = $(`<div>`, {
-				'id': `div-${item.item_id}`
-			}).append(btnRemove).append(btnAdd)
-			divAction.hide()
-			parent.append(divAction)
 
-			row.append(parent)
-		})
-
-		Page.append(row)
-		Page.show()
-	}
-
-	function fetchItemList() {
-		let category_id = $.Utils().getParameter(`category_id`)
-		App.Api.sheet({
-			route: `get_all_item_by_category_id`,
-			query: {
-				category_id
-			},
-			callback: function(response) {
-				if (NetworkCallback != null) NetworkCallback(response)
-
-				if (response.status === `success`) {
-					if (response.data != null) itemList = response.data
-					renderPage()
-				}
-			}
+			Page.append(divItem)
 		})
 	}
 
-	function getCartItemList() {
+	const getCartItemList = () => {
 		return itemList.filter(item => {
 			return item.count != null && item.count > 0
 		})
 	}
 
-	jQuery.ItemPage = function(app, div) {
-		App = app
-		Page = $(div)
-		Page.empty()
-
-		return {
-			init() {
-				fetchItemList()
-			},
-
-			isHasSelectedItem() {
-				return getCartItemList().length > 0
-			},
-
-			getCartItemList() {
-				return getCartItemList()
-			},
-
-			setNetworkCallback(callback) {
-				NetworkCallback = callback
-			},
-
-			show() {
-				App.hideMainButton()
-
-				App.MainButton.text = `စျေးဝယ်ခြင်း ကြည့်ရန်`
-				if (this.isHasSelectedItem()) App.showMainButton()
-				
-				Page.show()
-			},
-
-			hide() {
-				Page.hide()
-			}
-		}
-	}
 }(jQuery))

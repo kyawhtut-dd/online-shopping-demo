@@ -8,11 +8,11 @@
 	--status-height: 48px;
 	--accent-color: #ff0303;
 	--main-color: #f8a917;
-	--text-color: #222;
+	--text-color: var(--tg-theme-text-color);
 	--page-hint-color: #83878a;
 	--hint-color: #74787a;
 	--placeholder-color: #999da1;
-	--secondary-text-color: #707579;
+	--secondary-text-color: var(--tg-theme-hint-color);
 }
 
 .root {

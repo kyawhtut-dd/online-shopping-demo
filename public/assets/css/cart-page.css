@@ -112,5 +112,5 @@
 	font-size: 14px;
 	line-height: 18px;
 	padding: 10px 20px 24px;
-	color: black;
+	color: var(--secondary-text-color);
 }

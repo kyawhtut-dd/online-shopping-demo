@@ -31,11 +31,12 @@
 .category-label {
 	margin-top: 8px;
 	display: flex;
-	justify-content: center;
+	justify-content: center;;
 }
 
 .category-title {
 	font-weight: 500;
+	color: var(--text-color);
 }
 
 .category-button {
@@ -50,6 +51,7 @@
 	position: absolute;
 	padding: 0.5rem;
 	font-size: 18px;
+	font-weight: 600;
 	transform: scale3d(0.9, 0.9, 1);
 	width: 160px;
 }

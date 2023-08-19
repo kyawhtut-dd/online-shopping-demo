@@ -11,7 +11,7 @@
 	let MainButton = Telegram.WebApp.MainButton
 	let BackButton = Telegram.WebApp.BackButton
 	let initDataUnsafe = Telegram.WebApp.initDataUnsafe || {}
-	let isSupportedTelegram = Telegram.WebApp.webAppPlatform != undefined
+	let isSupportedTelegram = Telegram.WebApp.platform != `unknown`
 	let DEBUG = false
 	let isShopOpen = false
 

@@ -16,7 +16,7 @@
 	}
 
 	const init = () => {
-		App = $.App(true)
+		App = $.App(false)
 		ApiService = $.ApiService(App, $(`.pageAnimation`))
 		Animation = $.Animation()
 

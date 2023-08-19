@@ -18,6 +18,7 @@
 	jQuery.App = function(debug = false) {
 		DEBUG = debug
 		isShopOpen = isSupportedTelegram || DEBUG
+		console.log(`isShopOpen`, isShopOpen)
 
 		init()
 

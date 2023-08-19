@@ -7,20 +7,34 @@
 	jQuery.CategoryPage = function(app, page) {
 		App = app
 		Page = page
-		Page.empty()
 		
-		close()
+		colseWithClear()
 
-		return {
+		let object = {
 			open,
 			close,
 			colseWithClear,
 			setCategoryList,
-			setOnClickCategoryListener
+			onClickCategory
 		}
+
+		Object.defineProperty(object, `onClickCategory`, {
+			get: function() {
+				return onClickCategory
+			},
+			set: function(listener) {
+				onClickCategory = listener
+			}
+		})
+
+		return object
 	}
 
 	const open = (animation) => {
+		App.hideBackButton()
+		App.hideMainButton()
+		App.disableClosingConfirmation()
+		
 		if (animation != null) {
 			animation(Page)
 		} else {
@@ -49,9 +63,16 @@
 	}
 
 	const setCategoryList = (categoryList) => {
+		if (!App.isShopOpen) {
+			$.Utils().renderShopClose(Page)
+			return
+		}
 		Page.empty()
 
-		if (categoryList.length == 0) return
+		if (categoryList.length == 0) {
+			$.Utils().renderEmptyPage(Page)
+			return
+		}
 
 		categoryList.forEach(category => {
 			let divCategory = $(`<div>`, {
@@ -90,9 +111,5 @@
 
 			Page.append(divCategory)
 		})
-	}
-
-	const setOnClickCategoryListener = (listener) => {
-		onClickCategory = listener
 	}
 }(jQuery))

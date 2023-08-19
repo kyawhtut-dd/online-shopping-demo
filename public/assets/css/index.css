@@ -6,14 +6,12 @@
 	--page-animation-duration: .3s;
 	--page-animation: var(--page-animation-duration) ease;
 	--status-height: 48px;
-	--accent-color: #31b545;
+	--accent-color: #ff0303;
 	--main-color: #f8a917;
 	--text-color: #222;
 	--page-hint-color: #83878a;
 	--hint-color: #74787a;
 	--placeholder-color: #999da1;
-	--ripple-duration: .45s;
-	--ripple-end-duration: .3s;
 	--secondary-text-color: #707579;
 }
 
@@ -27,8 +25,10 @@ body.closed .page {
 }
 
 .pageAnimation {
-	height: 100vh;
+	width: 100%;
+	height: 100%;
 	position: absolute;
+	display: flex;
 }
 
 .page {
@@ -96,6 +96,19 @@ span.ripple {
 	background-color: rgba(255, 255, 255, 0.7);
 }
 
+.shop-close-demo {
+	width: 160px;
+	height: 160px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.shop-close-demo div {
+	width: 150px;
+	height: 150px;
+	background-size: contain;
+}
 
 
 @keyframes ripple {

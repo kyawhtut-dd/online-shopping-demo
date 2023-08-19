@@ -2,7 +2,7 @@
 	"use strict";
 
 	const BASE_URL = `https://script.google.com/macros/s/AKfycbzLhyJygr1MJQwNOznnDnKtxXB2MO2xtmw2dfEw5LLwh-sxaBjs2FZnl6PIBYG7EzMD/exec`
-
+	
 	let id = null
 	let username = null
 	let displayname = null
@@ -11,9 +11,13 @@
 	let MainButton = Telegram.WebApp.MainButton
 	let BackButton = Telegram.WebApp.BackButton
 	let initDataUnsafe = Telegram.WebApp.initDataUnsafe || {}
-	let isSupportedTelegram = Telegram.WebApp.webAppPlatform == null
+	let isSupportedTelegram = Telegram.WebApp.webAppPlatform != undefined
+	let DEBUG = false
+	let isShopOpen = false
 
-	jQuery.App = function() {
+	jQuery.App = function(debug = false) {
+		DEBUG = debug
+		isShopOpen = isSupportedTelegram || DEBUG
 
 		init()
 
@@ -25,6 +29,8 @@
 			MainButton,
 			BackButton,
 			Api,
+			isSupportedTelegram,
+			isShopOpen,
 			enableClosingConfirmation,
 			disableClosingConfirmation,
 			showMainButton,
@@ -46,9 +52,6 @@
 
 		processButton()
 
-		hideMainButton()
-		hideBackButton()
-
 		try {
 			id = initDataUnsafe.user.id || null
 		} catch (e) {
@@ -57,11 +60,21 @@
 		}
 		console.log(id)
 
-		checkUser()
+		if (!isShopOpen) {
+			// make shop inactive
+			$(`body`).addClass(`closed`)
+		} else {
+			$(`body`).removeClass(`closed`)
+			$(`#shopCloseLabel`).remove()
+		}
+
+		if (isShopOpen) {
+			checkUser()
+		}
 	}
 
 	const processButton = () => {
-		if (isSupportedTelegram) {
+		if (!isSupportedTelegram && DEBUG) {
 			let mButton = $(`<div>`, {
 				'class': `main-button`
 			})
@@ -73,6 +86,9 @@
 			MainButton = BootstrapMainButton(mButton)
 			BackButton = BootstrapBackButton(bButton)
 		}
+
+		hideMainButton()
+		hideBackButton()
 	}
 
 	const themeParams = () => {

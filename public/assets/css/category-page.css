@@ -3,7 +3,8 @@
 	display: flex;
 	flex-wrap: wrap;
 	margin: 0 auto;
-	justify-content: start;
+	padding-bottom: 32px;
+	justify-content: center;
 	align-content: flex-end;
 	transition: max-height var(--page-animation), opacity var(--page-animation);
 	background-color: var(--block-bg-color);

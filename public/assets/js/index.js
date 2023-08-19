@@ -1,92 +1,92 @@
 (function (jQuery) {
 
 	let App = null
-	
-	let pages = []
-	let mainPage = null
-	let currentPage = null
-	let animationPage = null
-	let pageStack = []
+	let ApiService = null
+	let Animation = null
+	let CurrentPage = null
 
-	function toggleCurrentPage() {
-		let isShowingLoading = false
-		let isShowingError = false
-		if (loadingPage != null) {
-			isShowingLoading = loadingPage.isShowing()
-		}
-		if (errorPage != null) {
-			isShowingError = errorPage.isShowing()
-		}
+	let CategoryPage = null
+	let ItemPage = null
+	let CartPage = null
 
-		if (isShowingLoading || isShowingError) {
-			if (currentPage != null) currentPage.hide()
-			return
+	jQuery.Index = function(app) {
+		return {
+			init
 		}
-
-		if (currentPage != null) currentPage.show()
 	}
 
-	jQuery.Home = function(app) {
-		App = app
-		return {
-			init(page) {
-				mainPage = page
-				currentPage = page
-				pageStack.push(page)
-			},
+	const init = () => {
+		App = $.App(true)
+		ApiService = $.ApiService(App, $(`.pageAnimation`))
+		Animation = $.Animation()
 
-			canGoback() {
-				return pageStack.length > 1
-			},
+		CategoryPage = $.CategoryPage(App, $(`.pageCategory`))
+		ItemPage = $.ItemPage(App, $(`.pageItemList`))
+		CartPage = $.CartPage(App, $(`.pageCart`))
 
-			goBack() {
-				let goBackPage = pageStack.pop()
-				goBackPage.hide()
-				
-				currentPage = pageStack[pageStack.length - 1]
-				if (pageStack.length == 1) App.hideBackButton()
-				currentPage.show()
-			},
-
-			openPage(page) {
-				App.showBackButton()
-				this.getCurrentPage().hide()
-
-				currentPage = page
-				pageStack.push(page)
-				
-				this.getCurrentPage().show()
-			},
-
-			setAnimationPage(page) {
-				animationPage = page
-			},
-
-			getCurrentPage() {
-				return currentPage
-			},
-
-			networkResult(result) {
-				if (currentPage != null) currentPage.hide()
-
-				if (result.status_code === 401) {
-					$.Utils().logout()
-				}
-
-				if (result.status === `loading` && animationPage != null) {
-					animationPage.loading()
-				} else if (result.status === `error` && animationPage != null) {
-					animationPage.error()
-				} else if ((result.data == null || (result.data.constructor === Array && result.data.length == 0)) && animationPage != null) {
-					animationPage.empty()
-				} else {
-					if (animationPage != null) animationPage.hide()
-				}
-			},
-
-			registerPage(page) {
-				pages.push(page)
-			},
+		CategoryPage.onClickCategory = (catetgory) => {
+			fetchItemListByCategoryId(catetgory.category_id)
 		}
+
+		CartPage.onEditCart = () => {
+			openPage(ItemPage, true, Animation.slideDown, Animation.slideUp)
+		}
+
+		App.MainButton.onClick(() => {
+			if (CurrentPage == ItemPage) {
+				CartPage.setCartItemList(ItemPage.getCartItemList())
+				openPage(CartPage, false, Animation.slideDown, Animation.slideUp)
+			} else if (CurrentPage == CartPage) {
+				if (App.isRegister) {}
+				else App.sendData(`register_request_from_cart_page`)
+			}
+		})
+
+		App.BackButton.onClick(() => {
+			if (CurrentPage == ItemPage) {
+				if (!ItemPage.isHomePage) openPage(CategoryPage, true, Animation.slideDown, Animation.slideUp)
+				else if (ItemPage.isHasSelectedItem()) App.showConfirmClose()
+				else App.close()
+			} else if (CurrentPage == CartPage) {
+				openPage(ItemPage, true, Animation.slideDown, Animation.slideUp)
+			} else App.close()
+		})
+
+		processPage()
+	}
+
+	const processPage = () => {
+		let category_id = $.Utils().getParameter(`category_id`)
+		if (category_id != null && category_id != ``) {
+			ItemPage.isHomePage = true
+			CurrentPage = ItemPage
+			ItemPage.open()
+
+			fetchItemListByCategoryId(category_id)
+		} else {
+			CurrentPage = CategoryPage
+			CategoryPage.open()
+			fetchCategoryList()
+		}
+	}
+
+	const fetchCategoryList = () => {
+		ApiService.fetchCategoryList((result) => {
+			CategoryPage.setCategoryList(result)
+		})
+	}
+
+	const fetchItemListByCategoryId = (category_id) => {
+		ApiService.fetchItemListByCategoryId(category_id, (result) => {
+			ItemPage.setItemList(result)
+			if (!ItemPage.isHomePage) openPage(ItemPage, false, Animation.slideDown, Animation.slideUp)
+		})
+	}
+
+	const openPage = (open, isCloseWithClear, openAnim, closeAnim) => {
+		if (isCloseWithClear) CurrentPage.colseWithClear(closeAnim)
+		else CurrentPage.close(closeAnim)
+		CurrentPage = open
+		CurrentPage.open(openAnim)
 	}
 }(jQuery))

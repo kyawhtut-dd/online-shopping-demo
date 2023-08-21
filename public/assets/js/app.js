@@ -3,49 +3,43 @@
 
 	const BASE_URL = `https://script.google.com/macros/s/AKfycbzLhyJygr1MJQwNOznnDnKtxXB2MO2xtmw2dfEw5LLwh-sxaBjs2FZnl6PIBYG7EzMD/exec`
 	
-	let id = null
-	let username = null
-	let displayname = null
-	let Api = $.Api(BASE_URL)
-	let isRegister = false
-	let MainButton = Telegram.WebApp.MainButton
-	let BackButton = Telegram.WebApp.BackButton
 	let initDataUnsafe = Telegram.WebApp.initDataUnsafe || {}
-	let isSupportedTelegram = Telegram.WebApp.platform != `unknown`
 	let DEBUG = false
-	let isShopOpen = false
+
+	let App = {
+		id: null,
+		username: null,
+		displayname: null,
+		isRegister: false,
+		MainButton: Telegram.WebApp.MainButton,
+		BackButton: Telegram.WebApp.BackButton,
+		Api: $.Api(BASE_URL),
+		isSupportedTelegram: Telegram.WebApp.platform != `unknown`,
+		isShopOpen: false,
+	}
 
 	jQuery.App = function(debug = false) {
 		DEBUG = debug
-		isShopOpen = isSupportedTelegram || DEBUG
+		App.isShopOpen = App.isSupportedTelegram || DEBUG
 
 		init()
 
-		return {
-			id,
-			username,
-			displayname,
-			isRegister,
-			MainButton,
-			BackButton,
-			Api,
-			isSupportedTelegram,
-			isShopOpen,
-			enableClosingConfirmation,
-			disableClosingConfirmation,
-			showMainButton,
-			hideMainButton,
-			showBackButton,
-			hideBackButton,
-			sendData,
-			expandApp,
-			showAlert,
-			showConfirm,
-			showPopup,
-			showConfirmClose,
-			themeParams,
-			close
-		}
+		App.enableClosingConfirmation = enableClosingConfirmation
+		App.disableClosingConfirmation = disableClosingConfirmation
+		App.showMainButton = showMainButton
+		App.hideMainButton = hideMainButton
+		App.showBackButton = showBackButton
+		App.hideBackButton = hideBackButton
+		App.sendData = sendData
+		App.expandApp = expandApp
+		App.showAlert = showAlert
+		App.showConfirm = showConfirm
+		App.showPopup = showPopup
+		App.showConfirmClose = showConfirmClose
+		App.themeParams = themeParams
+		App.close = close
+
+		return App
 	}
 
 	const init = () => {
@@ -53,14 +47,14 @@
 		processButton()
 
 		try {
-			id = initDataUnsafe.user.id || null
+			App.id = initDataUnsafe.user.id || null
 		} catch (e) {
-			id = $.Utils().getParameter(`id`)
+			App.id = $.Utils().getParameter(`id`)
 			console.log(e)
 		}
-		console.log(id)
+		console.log(App.id)
 
-		if (!isShopOpen) {
+		if (!App.isShopOpen) {
 			// make shop inactive
 			$(`body`).addClass(`closed`)
 		} else {
@@ -68,13 +62,13 @@
 			$(`#shopCloseLabel`).remove()
 		}
 
-		if (isShopOpen) {
+		if (App.isShopOpen) {
 			checkUser()
 		}
 	}
 
 	const processButton = () => {
-		if (!isSupportedTelegram && DEBUG) {
+		if (!App.isSupportedTelegram && DEBUG) {
 			let mButton = $(`<div>`, {
 				'class': `main-button`
 			})
@@ -83,8 +77,8 @@
 			})
 			$(`body`).append(mButton)
 			$(`body`).append(bButton)
-			MainButton = BootstrapMainButton(mButton)
-			BackButton = BootstrapBackButton(bButton)
+			App.MainButton = BootstrapMainButton(mButton)
+			App.BackButton = BootstrapBackButton(bButton)
 		}
 
 		hideMainButton()
@@ -104,19 +98,19 @@
 	}
 
 	const showMainButton = () => {
-		MainButton.show()
+		App.MainButton.show()
 	}
 
 	const hideMainButton = () => {
-		MainButton.hide()
+		App.MainButton.hide()
 	}
 
 	const showBackButton = () => {
-		BackButton.show()
+		App.BackButton.show()
 	}
 
 	const hideBackButton = () => {
-		BackButton.hide()
+		App.BackButton.hide()
 	}
 
 	const sendData = (data) => {
@@ -192,18 +186,18 @@
 	}
 
 	const checkUser = () => {
-		if (id == null || id == ``) return
-		Api.sheet({
+		if (App.id == null || App.id == ``) return
+		App.Api.sheet({
 			route: `check_user`,
 			query: {
-				user_id: id
+				user_id: App.id
 			},
 			callback: function(response) {
-				isRegister = false
+				App.isRegister = false
 				if (response.status == `success` && response.data != null) {
-					username = response.data.user_name
-					displayname = [response.data.first_name, response.data.last_name].join(" ")
-					isRegister = true
+					App.username = response.data.user_name
+					App.displayname = [response.data.first_name, response.data.last_name].join(" ")
+					App.isRegister = true
 				}
 			}
 		})

@@ -3,6 +3,7 @@
 	let App = null
 	let Page = null
 	let onEditCart = null
+	let cartItemList = []
 
 	jQuery.CartPage = function(app, page) {
 		App = app
@@ -14,7 +15,7 @@
 			open,
 			close,
 			colseWithClear,
-			setCartItemList,
+			cartItemList,
 			onEditCart
 		}
 
@@ -22,8 +23,18 @@
 			get: function() {
 				return onEditCart
 			},
-			set: function(listener) {
-				onEditCart = listener
+			set: function(value) {
+				onEditCart = value
+			}
+		})
+
+		Object.defineProperty(object, `cartItemList`, {
+			get: function() {
+				return cartItemList
+			},
+			set: function(value) {
+				cartItemList = value
+				renderUI()
 			}
 		})
 
@@ -70,7 +81,7 @@
 		}
 	}
 
-	const setCartItemList = (itemList) => {
+	const renderUI = () => {
 		Page.empty()
 
 		let cartContent = $(`<div>`, {
@@ -92,7 +103,7 @@
 
 		let cartList = $(`<div>`)
 
-		itemList.forEach(item => {
+		cartItemList.forEach(item => {
 			let cartItem = $(`<div>`, {
 				'class': `cart-item`
 			})

@@ -3,10 +3,7 @@
 	let App = null
 	let Api = null
 	let Page = null
-	let LoadingPage = null
-	let ErrorPage = null
-	let LoadingAnimation = null
-	let ErrorAnimation = null
+	let Animation = null
 
 	jQuery.ApiService = function(app, page) {
 		App = app
@@ -22,29 +19,7 @@
 	}
 
 	const init = () => {
-		LoadingPage = $(`<div>`)
-		LoadingAnimation = bodymovin.loadAnimation({
-			container: LoadingPage[0],
-			renderer: 'svg',
-			loop: true,
-			autoplay: false,
-			path: `./assets/animation/loading.json`
-		})
-
-		ErrorPage = $(`<div>`)
-		ErrorAnimation = bodymovin.loadAnimation({
-			container: ErrorPage[0],
-			renderer: 'svg',
-			loop: true,
-			autoplay: false,
-			path: `./assets/animation/error.json`
-		})
-
-		LoadingPage.hide()
-		ErrorPage.hide()
-
-		Page.append(LoadingPage)
-		Page.append(ErrorPage)
+		Page.empty()
 		Page.hide()
 	}
 
@@ -76,39 +51,39 @@
 		})
 	}
 
-	const toggleAnimation = (isLoading) => {
-		if (isLoading) {
-			LoadingAnimation.play()
-			LoadingPage.show()
-			Page.show()
-		} else {
-			LoadingAnimation.stop()
-			LoadingPage.hide()
+	const toggleAnimation = (isLoading, isError) => {
+		if (!isLoading && !isError) {
+			Animation.stop()
+			Page.empty()
 			Page.hide()
+			return
 		}
-	}
 
-	const toggleErrorAnimation = (isError) => {
+		let AnimationPath = `./assets/animation/loading.json`
+
 		if (isError) {
-			ErrorAnimation.play()
-			ErrorPage.show()
-			Page.show()
-		} else {
-			ErrorAnimation.stop()
-			ErrorPage.hide()
-			Page.hide()
+			AnimationPath = `./assets/animation/error.json`
 		}
+
+		Animation = bodymovin.loadAnimation({
+			container: Page[0],
+			renderer: 'svg',
+			loop: true,
+			autoplay: false,
+			path: AnimationPath
+		})
+
+		Animation.play()
+		Page.show()
 	}
 
 	const checkNetworkResponse = (response, callback) => {
-		toggleAnimation(response.status == `loading`)
+		toggleAnimation(response.status == `loading`, response.status == `error`)
 
 		if (response.status === `success`) {
 			callback(response.data)
-			toggleErrorAnimation(false)
-		} else if (response.status == `error`) {
-			if (App.isSupportedTelegram) App.showAlert(response.error)
-			toggleErrorAnimation(true)
+		} else if (response.status == `error` && App.isSupportedTelegram) {
+			App.showAlert(response.error)
 		}
 	}
 

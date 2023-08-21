@@ -2,8 +2,15 @@
 
 	let App = null
 	let Page = null
-	let ItemList = []
+	let itemList = []
 	let isHomePage = false
+
+	let PageItemList = {
+		itemList,
+		cartItemList: [],
+		isHasSelectedItem: false,
+		isHomePage
+	}
 
 	jQuery.ItemPage = function(app, page) {
 		App = app
@@ -11,17 +18,11 @@
 
 		colseWithClear()
 
-		let object = {
-			open,
-			close,
-			colseWithClear,
-			setItemList,
-			getCartItemList,
-			isHomePage,
-			isHasSelectedItem
-		}
+		PageItemList.open = open
+		PageItemList.close = close
+		PageItemList.colseWithClear = colseWithClear
 
-		Object.defineProperty(object, `isHomePage`, {
+		Object.defineProperty(PageItemList, `isHomePage`, {
 			get: function() {
 				return isHomePage
 			},
@@ -30,7 +31,29 @@
 			}
 		})
 
-		return object
+		Object.defineProperty(PageItemList, `itemList`, {
+			get: function() {
+				return itemList
+			},
+			set: function(value) {
+				itemList = value
+				renderUI()
+			}
+		})
+
+		Object.defineProperty(PageItemList, `cartItemList`, {
+			get: function() {
+				return itemList.filter(item => item.count != null && item.count > 0)
+			}
+		})
+
+		Object.defineProperty(PageItemList, `isHasSelectedItem`, {
+			get: function() {
+				return PageItemList.cartItemList.length > 0
+			}
+		})
+
+		return PageItemList
 	}
 
 	const open = (animation) => {
@@ -45,8 +68,6 @@
 	}
 
 	const close = (animation) => {
-		App.hideBackButton()
-
 		if (animation != null) {
 			animation(Page)
 		} else {
@@ -55,8 +76,6 @@
 	}
 
 	const colseWithClear = (animation) => {
-		App.hideBackButton()
-
 		if (animation != null) {
 			animation(
 				Page,
@@ -75,18 +94,13 @@
 		App.disableClosingConfirmation()
 
 		App.MainButton.text = `စျေးဝယ်ခြင်း ကြည့်ရန်`
-		if (isHasSelectedItem()) {
+		if (PageItemList.isHasSelectedItem) {
 			App.enableClosingConfirmation()
 			App.showMainButton()
 		}
 	}
 
-	const isHasSelectedItem = () => {
-		return getCartItemList().length > 0
-	}
-
-	const setItemList = (itemList) => {
-		ItemList = itemList
+	const renderUI = () => {
 		Page.empty()
 
 		if (itemList.length == 0) {
@@ -179,12 +193,6 @@
 			})
 
 			Page.append(divItem)
-		})
-	}
-
-	const getCartItemList = () => {
-		return ItemList.filter(item => {
-			return item.count != null && item.count > 0
 		})
 	}
 

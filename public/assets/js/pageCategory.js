@@ -3,6 +3,7 @@
 	let App = null
 	let Page = null
 	let onClickCategory = null
+	let categoryList = []
 
 	jQuery.CategoryPage = function(app, page) {
 		App = app
@@ -14,7 +15,7 @@
 			open,
 			close,
 			colseWithClear,
-			setCategoryList,
+			categoryList,
 			onClickCategory
 		}
 
@@ -22,8 +23,18 @@
 			get: function() {
 				return onClickCategory
 			},
-			set: function(listener) {
-				onClickCategory = listener
+			set: function(value) {
+				onClickCategory = value
+			}
+		})
+
+		Object.defineProperty(object, `categoryList`, {
+			get: function() {
+				return categoryList
+			},
+			set: function(value) {
+				categoryList = value
+				renderUI()
 			}
 		})
 
@@ -62,7 +73,7 @@
 		}
 	}
 
-	const setCategoryList = (categoryList) => {
+	const renderUI = () => {
 		if (!App.isShopOpen) {
 			$.Utils().renderShopClose(Page)
 			return

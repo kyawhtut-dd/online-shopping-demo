@@ -16,7 +16,7 @@
 	}
 
 	const init = () => {
-		App = $.App(false)
+		App = $.App(true)
 		ApiService = $.ApiService(App, $(`.pageAnimation`))
 		Animation = $.Animation()
 
@@ -34,7 +34,7 @@
 
 		App.MainButton.onClick(() => {
 			if (CurrentPage == ItemPage) {
-				CartPage.setCartItemList(ItemPage.getCartItemList())
+				CartPage.cartItemList = ItemPage.cartItemList
 				openPage(CartPage, false, Animation.slideDown, Animation.slideUp)
 			} else if (CurrentPage == CartPage) {
 				if (App.isRegister) {}
@@ -45,7 +45,7 @@
 		App.BackButton.onClick(() => {
 			if (CurrentPage == ItemPage) {
 				if (!ItemPage.isHomePage) openPage(CategoryPage, true, Animation.slideDown, Animation.slideUp)
-				else if (ItemPage.isHasSelectedItem()) App.showConfirmClose()
+				else if (ItemPage.isHasSelectedItem) App.showConfirmClose()
 				else App.close()
 			} else if (CurrentPage == CartPage) {
 				openPage(ItemPage, true, Animation.slideDown, Animation.slideUp)
@@ -72,13 +72,13 @@
 
 	const fetchCategoryList = () => {
 		ApiService.fetchCategoryList((result) => {
-			CategoryPage.setCategoryList(result)
+			CategoryPage.categoryList = result
 		})
 	}
 
 	const fetchItemListByCategoryId = (category_id) => {
 		ApiService.fetchItemListByCategoryId(category_id, (result) => {
-			ItemPage.setItemList(result)
+			ItemPage.itemList = result
 			if (!ItemPage.isHomePage) openPage(ItemPage, false, Animation.slideDown, Animation.slideUp)
 		})
 	}
